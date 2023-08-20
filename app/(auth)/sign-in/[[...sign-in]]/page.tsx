@@ -7,8 +7,7 @@ import Image from "next/image";
 export default function Page() {
 	return (
 		<>
-			<SvgBackground>
-				<div className="flex justify-center items-center  h-screen">
+			
 					<div className="grid grid-cols-2  max-w-fit mx-auto">
 						<div className="flex flex-col justify-center items-center">
 							<SignIn
@@ -33,8 +32,8 @@ export default function Page() {
 							<h1 className="text-black text-lg font-bold">Welcome to Finesse Madical Admin! 🎉</h1>
 						</div>
 					</div>
-				</div>
-			</SvgBackground>
+				
+			
 		</>
 	);
 }
