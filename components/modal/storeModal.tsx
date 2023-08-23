@@ -1,8 +1,15 @@
-"use client"
+"use client";
 
 import { useModalDialog } from "@/hooks/use-modal-dialog";
 import { Modal } from "../ui/modal";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "../ui/form";
 import { useState } from "react";
 
 import * as z from "zod";
@@ -20,79 +27,74 @@ const formSchema = z.object({
 });
 
 export const StoreModal = () => {
+	const StoreModal = useModalDialog();
 
-    const StoreModal = useModalDialog();
+	const [loading, setLoading] = useState(false);
 
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			name: "",
+		},
+	});
 
-    const [loading, setLoading ] = useState(false);
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		try {
+			setLoading(true);
+			const response = await axios.post("/api/store", values);
+			window.location.assign(`/${response.data.id}`);
+		} catch (error) {
+			toast.error("something went wrong");
+		} finally {
+			setLoading(false);
+		}
+	};
 
-    const form = useForm<z.infer<typeof formSchema>>({
+	return (
+		<Modal
+			title="Create New Store"
+			description="create a new to to sell your product"
+			isOpen={StoreModal.isOpen}
+			onClose={StoreModal.onClose}
+		>
+			<div>
+				<div className="space-y-4 p">
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)}>
+							<FormField
+								control={form.control}
+								name="name"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Name</FormLabel>
 
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            name: "",
-        },
-    });
-
-    const onSubmit = async (data: z.infer<typeof formSchema>) => {
-        
-        try {
-            setLoading(true);
-            const response = await axios.post("/api/store", data);
-            window.location.assign(`/${response.data.id}`);
-        } catch (error) {
-            toast.error('something went wrong');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-			<Modal
-				title="Create New Store"
-				description="create a new to to sell your product"
-				isOpen={StoreModal.isOpen}
-				onClose={StoreModal.onClose}
-			>
-				<div>
-					<div className="space-y-4 p">
-						<Form {...form}>
-							<form onSubmit={form.handleSubmit(onSubmit)}>
-								<FormField
-									control={form.control}
-									name="name"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Name</FormLabel>
-
-											<FormControl>
-												<Input
-													disabled={loading}
-													placeholder="Online medication store"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<div className="pt-6 items-center justify-end flex space-x-4">
-									<Button
-										disabled={loading}
-										variant="outline"
-										onClick={StoreModal.onClose}
-									>
-										cancel
-									</Button>
-									<Button disabled={loading} type="submit">
-										continue
-									</Button>
-								</div>
-							</form>
-						</Form>
-					</div>
+										<FormControl>
+											<Input
+												disabled={loading}
+												placeholder="Online medication store"
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<div className="pt-6 items-center justify-end flex space-x-4">
+								<Button
+									disabled={loading}
+									variant="outline"
+									onClick={StoreModal.onClose}
+								>
+									cancel
+								</Button>
+								<Button disabled={loading} type="submit">
+									continue
+								</Button>
+							</div>
+						</form>
+					</Form>
 				</div>
-			</Modal>
-		);
-}
-
+			</div>
+		</Modal>
+	);
+};
