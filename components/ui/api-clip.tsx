@@ -37,11 +37,11 @@ export const ApiClip: React.FC<ApiClipProps> = ({ title, description, variant="P
 				{title}
 				<Badge variant={variantMap[variant]}>{textMap[variant]}</Badge>
 			</AlertTitle>
-            <AlertDescription className="mt-4 flex items-center justify-between">
-                <code className="relative rounded bg-muted px-[0.3rem] py-[0.3rem] font-mono text-sm font-semibold">
+            <AlertDescription className="mt-4 lg:flex lg:items-center  lg:justify-between overflow-hidden ">
+                <code className="relative rounded bg-muted font-mono text-sm font-semibold">
                     {description}
                 </code>
-                <Button variant='outline' size='icon' onClick={onCopy}>
+                <Button variant='outline' size='icon' onClick={onCopy} className="mt-2 lg:mt-0">
                     <Copy className="h-4 w-4"/>
                 </Button>
 

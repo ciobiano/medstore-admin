@@ -27,10 +27,10 @@ const SettingsPage: React.FC<SettingsPageProps> = async ({ params }) => {
     }
 
 	return (
-		<div className="flex-col">
-			<div className="flex-1 p-8  space-y-4">
-                <SettingsForm storeData={store} />
-            </div>
+		<div className="flex justify-center items-center mx-auto h-fit mt-6 ">
+			<div className="p-8 space-y-4 my-auto w-full overflow-y-hidden   lg:w-3/5">
+				<SettingsForm storeData={store} />
+			</div>
 		</div>
 	);
 };
