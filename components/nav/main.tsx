@@ -21,15 +21,21 @@ className,
 
     },
     {
+      href: `/${params.storeId}/billboards`,
+      label: "Billboards",
+      active: pathname === `/${params.storeId}/billboards`
+      
+    },
+    {
+      href: `/${params.storeId}/categories`,
+      label: "Categories",
+      active: pathname === `/${params.storeId}/categories`
+      
+    },
+    {
         href: `/${params.storeId}/settings`,
         label: "Settings",
         active: pathname === `/${params.storeId}/settings`
-
-    },
-    {
-        href: `/${params.storeId}/billboards`,
-        label: "Billboards",
-        active: pathname === `/${params.storeId}/billboards`
 
     },
   ]
