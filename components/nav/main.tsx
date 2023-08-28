@@ -33,6 +33,12 @@ className,
       
     },
     {
+      href: `/${params.storeId}/sizes`,
+      label: "Sizes",
+      active: pathname === `/${params.storeId}/sizes`
+      
+    },
+    {
         href: `/${params.storeId}/settings`,
         label: "Settings",
         active: pathname === `/${params.storeId}/settings`
