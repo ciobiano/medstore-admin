@@ -13,13 +13,14 @@ datasource db {
 
 
 model Store {
-id      String @id  @default (uuid () )
-name    String
-userId  String
-medicine Medicine[] @relation("StoreToMedicine")
+ id           String        @id @default(uuid())
+  name         String
+  userId       String
+  healthProduct HealthProduct[] @relation("StoreToHealthProduct")
 billboard Billboard[] @relation("StoreToBillboard")
 category Category[] @relation("StoreToCategory")
 size    Size[] @relation("SizeToStore")
+manufacturer Manufacturer[] @relation("StoreToManufacturer")
 order   Order[] @relation("StoreToOrder")
 createdAt  DateTime @default(now() )
 updatedAt  DateTime @updatedAt
@@ -43,7 +44,7 @@ model Category{
   name String
   storeId String
   store Store @relation("StoreToCategory",fields: [storeId], references: [id])
-  medicines Medicine[] @relation("CategoryToMedicine")
+  healthProducts HealthProduct[] @relation("CategoryToHealthProduct")
   billboardId String
   billboard Billboard @relation(fields: [billboardId], references: [id])
   createdAt DateTime @default(now())
@@ -60,33 +61,32 @@ model Size{
   value String
   storeId String
   store Store @relation("SizeToStore",fields: [storeId], references: [id])
-  medicine Medicine[] @relation("SizeToMedicine")
+  healthProducts HealthProduct[] @relation("SizeToHealthProduct")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@index([storeId])
 }
 
-model Medicine {
-  id          String    @id @default(uuid())
-  storeId     String    // Foreign Key to Store
-  store       Store     @relation("StoreToMedicine", fields: [storeId], references: [id])
-  categoryId  String    // Foreign Key to Category
-  category    Category  @relation("CategoryToMedicine", fields: [categoryId], references: [id])
-  manufacturerId String // Foreign Key to Manufacturer
-  manufacturer Manufacturer @relation("ManufacturerToMedicine", fields: [manufacturerId], references: [id])
-  size       Size      @relation("SizeToMedicine", fields: [sizeId], references: [id])
-  sizeId     String    // Foreign Key to Size
-  name        String
-  description String
-  price       Decimal
-  stock       Int
-  isFeatured  Boolean   @default(false)
-  isOutOfStock Boolean   @default(false)
-  images      Image[]   // Relation to Image model
-  orderItems  OrderItem[] // Relation to OrderItem model
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
+model HealthProduct {
+ id             String       @id @default(uuid())
+  storeId        String
+  store          Store        @relation("StoreToHealthProduct", fields: [storeId], references: [id])
+  categoryId     String
+  category       Category     @relation("CategoryToHealthProduct", fields: [categoryId], references: [id])
+  manufacturerId String
+  manufacturer   Manufacturer @relation("ManufacturerToHealthProduct", fields: [manufacturerId], references: [id])
+  size           Size         @relation("SizeToHealthProduct", fields: [sizeId], references: [id])
+  sizeId         String
+  name           String
+  description    String
+  price          Decimal
+  stock          Int
+  isFeatured     Boolean      @default(false)
+  isOutOfStock   Boolean      @default(false)
+  images         Image[] 
+  orderItems     OrderItem[] 
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   @@index([storeId])
   @@index([categoryId])
   @@index([manufacturerId])
@@ -95,28 +95,47 @@ model Medicine {
 model Manufacturer {
   id       String  @id @default(uuid())
   name     String
-  medicines Medicine[] @relation("ManufacturerToMedicine")
+  storeId  String  // Foreign Key to Store
+  store    Store   @relation("StoreToManufacturer", fields: [storeId], references: [id])
+
+ healthProducts HealthProduct[] @relation("ManufacturerToHealthProduct")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([storeId])
 
 }
 
 model Image {
   id        String   @id @default(uuid())
-  medicineId String   // Foreign Key to Medicine
-  medicine   Medicine @relation(fields: [medicineId], references: [id])
+  healthProductId String
+  healthProduct   HealthProduct @relation(fields: [healthProductId], references: [id])
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([medicineId])
+  @@index([healthProductId])
 }
+model Customer {
+  id          String  @id @default(uuid())
+  externalId  String  // ID provided by Clerk
+  email       String
+  phone       String?
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([externalId])
+}
+
 
 model Order {
   id        String    @id @default(uuid())
   storeId     String    // Foreign Key to Store
   store       Store     @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItems OrderItem[] // Relation to OrderItem model
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
   isPaid     Boolean   @default(false)
   phone      String    @default("")
   address    String    @default("")
@@ -124,18 +143,19 @@ model Order {
   updatedAt DateTime  @updatedAt
 
   @@index([storeId])
+  @@index([customerId])
 }
 
 model OrderItem {
   id        String   @id @default(uuid())
   orderId   String   // Foreign Key to Order
   order     Order    @relation(fields: [orderId], references: [id])
-  medicineId String   // Foreign Key to Medicine
-  medicine   Medicine @relation(fields: [medicineId], references: [id])
+  healthProductId String
+  healthProduct   HealthProduct @relation(fields: [healthProductId], references: [id])
   quantity  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([orderId])
-  @@index([medicineId])
+  @@index([healthProductId])
 }
