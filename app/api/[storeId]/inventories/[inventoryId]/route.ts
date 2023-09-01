@@ -150,6 +150,8 @@ export async function PATCH(
 			data: {
 				name,
 				price,
+				stock,
+				description,
 				categoryId,
 				manufacturerId,
 				sizeId,

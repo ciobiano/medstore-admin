@@ -34,6 +34,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
 	name: z.string().min(3),
@@ -43,8 +44,9 @@ const formSchema = z.object({
 	manufacturerId: z.string().min(1),
 	sizeId: z.string().min(1),
 	isFeatured: z.boolean().default(false).optional(),
-	Stock: z.number().min(0), // New field
-	isOutOfStock: z.boolean().default(false).optional(), 
+	stock: z.coerce.number().min(0), // New field
+	description: z.string().min(3).max(120),
+	isOutOfStock: z.boolean().default(false).optional(),
 });
 
 interface InventoryFormProps {
@@ -91,6 +93,8 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 				categoryId: "",
 				manufacturerId: "",
 				sizeId: "",
+				stock: 0,
+				description: "",
 				isFeatured: false,
 				isOutOfStock: false,
 		  };
@@ -123,7 +127,9 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 	const onDelete = async () => {
 		try {
 			setLoading(true);
-			await axios.delete(`/api/${params.storeId}/inventories/${params.productId}`);
+			await axios.delete(
+				`/api/${params.storeId}/inventories/${params.productId}`
+			);
 			router.refresh();
 			router.push(`/${params.storeId}/inventories`);
 			toast.success("Inventory deleted");
@@ -224,7 +230,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 						/>
 						<FormField
 							control={form.control}
-							name="Stock"
+							name="stock"
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>In-stock</FormLabel>
@@ -295,7 +301,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 										<SelectContent>
 											{sizes.map((size) => (
 												<SelectItem key={size.id} value={size.id}>
-												{size.name}	{size.value}
+													{size.name} {size.value}
 												</SelectItem>
 											))}
 										</SelectContent>
@@ -326,7 +332,10 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 										</FormControl>
 										<SelectContent>
 											{manufacturers.map((manufacturer) => (
-												<SelectItem key={manufacturer.id} value={manufacturer.id}>
+												<SelectItem
+													key={manufacturer.id}
+													value={manufacturer.id}
+												>
 													{manufacturer.name}
 												</SelectItem>
 											))}
@@ -375,6 +384,24 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 											This product will not appear anywhere in the store.
 										</FormDescription>
 									</div>
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									{/* <FormLabel>Description</FormLabel> */}
+									<FormControl>
+										<Textarea
+											disabled={loading}
+											placeholder="product description..... "
+											{...field}
+											className="h-32"
+										/>
+									</FormControl>
+									<FormMessage />
 								</FormItem>
 							)}
 						/>

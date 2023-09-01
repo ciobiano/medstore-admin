@@ -39,9 +39,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
 			toast.success("Product deleted");
 		} catch (error) {
-			toast.error(
-				" check if all categories using this product are deleted first"
-			);
+			toast.error("Failed to delete the product. Please try again.");
+
 		} finally {
 			setLoading(false);
 			setOpen(false);

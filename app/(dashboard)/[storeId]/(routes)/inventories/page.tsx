@@ -26,7 +26,7 @@ const inventoryPage = async ({ params }: { params: { storeId: string } }) => {
 		isOutOfStock: item.isOutOfStock,
 		price: formatter.format(item.price.toNumber()),
 		category: item.category.name,
-		size: item.size.name,
+		size: item.size.value,
 		manufacturer: item.manufacturer.name,
 		stock: item.stock,
 		createdAt: format(item.createdAt, "MMMM do, yyyy"),

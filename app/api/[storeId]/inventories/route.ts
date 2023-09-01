@@ -3,7 +3,6 @@ import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
 
-
 export async function POST(
 	req: Request,
 	{ params }: { params: { storeId: string } }
@@ -26,6 +25,8 @@ export async function POST(
 			description,
 		} = body;
 
+		
+
 		if (!userId) {
 			return new NextResponse("Unauthenticated", { status: 403 });
 		}
@@ -41,8 +42,8 @@ export async function POST(
 		if (!price) {
 			return new NextResponse("Price is required", { status: 400 });
 		}
-		if(!stock){
-			return new NextResponse("Stock is required", { status: 400 })
+		if (!stock) {
+			return new NextResponse("Stock is required", { status: 400 });
 		}
 
 		if (!categoryId) {
@@ -61,6 +62,11 @@ export async function POST(
 			return new NextResponse("Store id is required", { status: 400 });
 		}
 
+		if (price < 0 || stock < 0) {
+			return new NextResponse("Price and stock must be non-negative", {
+				status: 400,
+			});
+		}
 		const storeByUserId = await prismadb.store.findFirst({
 			where: {
 				id: params.storeId,
@@ -108,7 +114,13 @@ export async function GET(
 		const categoryId = searchParams.get("categoryId") || undefined;
 		const manufacturerId = searchParams.get("manufacturerId") || undefined;
 		const sizeId = searchParams.get("sizeId") || undefined;
-		const isFeatured = searchParams.get("isFeatured");
+		const isFeatured =
+			searchParams.get("isFeatured") === "true" ? true : undefined;
+		const isOutOfStock =
+			searchParams.get("isOutOfStock") === "true" ? true : false;
+
+		const limit = parseInt(searchParams.get("limit") || "10");
+		const skip = parseInt(searchParams.get("skip") || "0");
 
 		if (!params.storeId) {
 			return new NextResponse("Store id is required", { status: 400 });
@@ -120,8 +132,8 @@ export async function GET(
 				categoryId,
 				manufacturerId,
 				sizeId,
-				isFeatured: isFeatured ? true : undefined,
-				isOutOfStock: false,
+				isFeatured,
+				isOutOfStock,
 			},
 			include: {
 				images: true,
@@ -129,6 +141,8 @@ export async function GET(
 				manufacturer: true,
 				size: true,
 			},
+			take: limit,
+			skip,
 			orderBy: {
 				createdAt: "desc",
 			},
