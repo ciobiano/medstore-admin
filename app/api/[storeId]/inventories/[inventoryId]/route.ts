@@ -31,6 +31,7 @@ export async function GET(
 	}
 }
 
+
 export async function DELETE(
 	req: Request,
 	{ params }: { params: { inventoryId: string; storeId: string } }
@@ -61,6 +62,7 @@ export async function DELETE(
 			where: {
 				id: params.inventoryId,
 			},
+			
 		});
 
 		return NextResponse.json(inventories);

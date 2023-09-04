@@ -84,7 +84,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 	const defaultValues = ProductData
 		? {
 				...ProductData,
-				price: parseFloat(String(ProductData?.price)),
+				price: parseFloat(ProductData?.price.toString()),
 		  }
 		: {
 				name: "",
@@ -128,7 +128,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 		try {
 			setLoading(true);
 			await axios.delete(
-				`/api/${params.storeId}/inventories/${params.productId}`
+				`/api/${params.storeId}/inventories/${params.inventoryId}`
 			);
 			router.refresh();
 			router.push(`/${params.storeId}/inventories`);
