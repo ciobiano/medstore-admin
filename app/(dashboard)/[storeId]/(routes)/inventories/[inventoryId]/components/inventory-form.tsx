@@ -45,7 +45,7 @@ const formSchema = z.object({
 	sizeId: z.string().min(1),
 	isFeatured: z.boolean().default(false).optional(),
 	stock: z.coerce.number().min(0), // New field
-	description: z.string().min(3).max(120),
+	description: z.string().min(3).max(1200),
 	isOutOfStock: z.boolean().default(false).optional(),
 });
 
