@@ -1,18 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
 import { CellAction } from "./cell-action";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type CategoryColumn = {
 	id: string;
 	name: string;
 	billboardLabel: string;
-	createdAt: string
-	
+	createdAt: string;
 };
 
 export const columns: ColumnDef<CategoryColumn>[] = [
@@ -31,7 +26,6 @@ export const columns: ColumnDef<CategoryColumn>[] = [
 	},
 	{
 		id: "action",
-		cell: ({ row }) => 
-			<CellAction data={row.original} />
-	}
+		cell: ({ row }) => <CellAction data={row.original} />,
+	},
 ];

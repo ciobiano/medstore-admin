@@ -1,0 +1,22 @@
+type Inventory {
+	id: ID!
+	name: String!
+	description: String
+	price: Float!
+	stock: Int!
+}
+
+type CartItem {
+	inventory: Inventory!
+	quantity: Int!
+}
+
+type Query {
+	getCart: [CartItem]
+}
+
+type Mutation {
+	addToCart(inventoryId: ID!, quantity: Int!): CartItem
+	removeFromCart(inventoryId: ID!): Boolean
+	clearCart: Boolean
+}

@@ -5,8 +5,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { CellAction } from "./cell-action";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type InventoryColumn = {
 	id: string;
 	name: string;
@@ -28,7 +26,6 @@ export const columns: ColumnDef<InventoryColumn>[] = [
 	{
 		accessorKey: "manufacturer",
 		header: "Manufacturer",
-		
 	},
 	{
 		accessorKey: "category",
@@ -54,7 +51,7 @@ export const columns: ColumnDef<InventoryColumn>[] = [
 		accessorKey: "size",
 		header: "Size",
 	},
-	
+
 	{
 		accessorKey: "createdAt",
 		header: ({ column }) => {

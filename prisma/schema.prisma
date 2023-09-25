@@ -76,6 +76,7 @@ model Inventory {
   manufacturer  Manufacturer  @relation("ManufacturerToInventory", fields: [manufacturerId], references: [id])
   size          Size          @relation("SizeToInventory", fields: [sizeId], references: [id])
   sizeId        String
+  cartItems     CartItem[]
   name          String
   description   String
   price         Decimal
@@ -116,25 +117,13 @@ model Image {
   @@index([inventoryId])
 }
 
-model Customer {
-  id         String    @id @default(uuid())
-  externalId String    // ID provided by Clerk
-  email      String
-  phone      String?
-  orders     Order[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-
-  @@index([externalId])
-}
-
 model Order {
   id         String     @id @default(uuid())
   storeId    String     // Foreign Key to Store
   store      Store      @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItems OrderItem[] // Relation to OrderItem model
   customerId String?
-  customer   Customer?  @relation(fields: [customerId], references: [id])
+  quantity   Int
   isPaid     Boolean    @default(false)
   phone      String     @default("")
   address    String     @default("")
@@ -156,5 +145,18 @@ model OrderItem {
   updatedAt    DateTime   @updatedAt
 
   @@index([orderId])
+  @@index([inventoryId])
+}
+
+model CartItem {
+  id          String    @id @default(uuid())
+  cartId      String    // Foreign Key to Cart
+  inventoryId String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  quantity    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([cartId])
   @@index([inventoryId])
 }
