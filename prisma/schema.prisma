@@ -59,8 +59,8 @@ model Size {
   value       String
   storeId     String
   store       Store      @relation("SizeToStore", fields: [storeId], references: [id])
-  inventoryId String?    // Foreign key to Inventory
-  inventory   Inventory? @relation(fields: [inventoryId], references: [id])
+  inventoryId String   
+  inventory   InventorySize[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -78,7 +78,7 @@ model Inventory {
   category       Category      @relation("CategoryToInventory", fields: [categoryId], references: [id])
   manufacturerId String
   manufacturer   Manufacturer  @relation("ManufacturerToInventory", fields: [manufacturerId], references: [id])
-  sizes          Size[]       // one-to-many relation
+  sizes          InventorySize[]    // one-to-many relation
   cartItems      CartItem[]
   name           String
   description    String
@@ -94,6 +94,16 @@ model Inventory {
   @@index([storeId])
   @@index([categoryId])
   @@index([manufacturerId])
+}
+ model InventorySize {
+  inventoryId String
+  sizeId      String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  size        Size      @relation(fields: [sizeId], references: [id])
+
+  @@id([inventoryId, sizeId])
+  @@index([inventoryId])
+  @@index([sizeId])
 }
 
 model Manufacturer {

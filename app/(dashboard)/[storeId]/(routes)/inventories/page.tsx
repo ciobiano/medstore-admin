@@ -13,7 +13,11 @@ const inventoryPage = async ({ params }: { params: { storeId: string } }) => {
 		include: {
 			manufacturer: true,
 			category: true,
-			size: true,
+			sizes: {
+				include: {
+					size: true,
+				},
+			},
 		},
 		orderBy: {
 			createdAt: "desc",
@@ -26,7 +30,7 @@ const inventoryPage = async ({ params }: { params: { storeId: string } }) => {
 		isOutOfStock: item.isOutOfStock,
 		price: formatter.format(item.price.toNumber()),
 		category: item.category.name,
-		size: item.size.value,
+		size: item.sizes.map((sizeObj) => sizeObj.size.value).join(", "),
 		manufacturer: item.manufacturer.name,
 		stock: item.stock,
 		createdAt: format(item.createdAt, "MMMM do, yyyy"),

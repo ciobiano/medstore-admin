@@ -17,7 +17,7 @@ import { Separator } from "@/components/ui/separator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Category, Manufacturer, Image, Inventory, Size } from "@prisma/client";
 import axios from "axios";
-import { TrashIcon } from "lucide-react";
+import { Check, ChevronsUpDown, TrashIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -35,6 +35,9 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 
 const formSchema = z.object({
 	name: z.string().min(3),
@@ -42,7 +45,7 @@ const formSchema = z.object({
 	price: z.coerce.number().min(1),
 	categoryId: z.string().min(1),
 	manufacturerId: z.string().min(1),
-	sizeId: z.string().min(1),
+	sizeIds: z.array(z.string().min(1)),
 	isFeatured: z.boolean().default(false).optional(),
 	stock: z.coerce.number().min(0), // New field
 	description: z.string().min(3).max(1200),
@@ -92,7 +95,7 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 				price: 0,
 				categoryId: "",
 				manufacturerId: "",
-				sizeId: "",
+				sizeIds: [],
 				stock: 0,
 				description: "",
 				isFeatured: false,
@@ -140,6 +143,20 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 			setOpen(false);
 		}
 	};
+	const toggleSizeSelection = (name: string, value: string) => {
+		const currentSizes = form.getValues("sizeIds") as string[] | undefined;
+		const sizeValue = `${value}`;
+
+		if (currentSizes?.includes(sizeValue)) {
+			form.setValue(
+				"sizeIds",
+				currentSizes.filter(size => size !== sizeValue)
+			);
+		} else {
+			form.setValue("sizeIds", [...(currentSizes ?? []), sizeValue]);
+		}
+	};
+
 	return (
 		<>
 			<AlertModal
@@ -280,32 +297,57 @@ export const InventoryForm: React.FC<InventoryFormProps> = ({
 						/>
 						<FormField
 							control={form.control}
-							name="sizeId"
+							name="sizeIds"
 							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Size</FormLabel>
-									<Select
-										disabled={loading}
-										onValueChange={field.onChange}
-										value={field.value}
-										defaultValue={field.value}
-									>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue
-													defaultValue={field.value}
-													placeholder="Select a size"
-												/>
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{sizes.map((size) => (
-												<SelectItem key={size.id} value={size.id}>
-													{size.name} {size.value}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
+								<FormItem className="flex flex-col">
+									<FormLabel>Sizes</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant="outline"
+													role="combobox"
+													className={cn(
+														"w-full justify-between",
+														(field.value?.length || 0) === 0 &&
+															"text-muted-foreground"
+													)}
+												>
+													{field.value?.length > 0
+														? field.value.join(", ")
+														: "Select sizes"}
+													<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent className="w-full justify-center items-center p-0">
+											<Command>
+												<CommandInput placeholder="Search size..." />
+												<CommandEmpty>No size found.</CommandEmpty>
+												<CommandGroup>
+													{sizes.map((size) => (
+														<CommandItem
+															value={size.name}
+															key={size.value}
+															onSelect={() => {
+																toggleSizeSelection(size.name, size.value);
+															}}
+														>
+															<Check
+																className={cn(
+																	"mr-2 h-4 w-4",
+																	(field.value || []).includes(`${size.value}`)
+																		? "opacity-100"
+																		: "opacity-0"
+																)}
+															/>
+															{size.value}
+														</CommandItem>
+													))}
+												</CommandGroup>
+											</Command>
+										</PopoverContent>
+									</Popover>
 									<FormMessage />
 								</FormItem>
 							)}
