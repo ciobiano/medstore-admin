@@ -18,7 +18,7 @@ export async function POST(
 			stock,
 			categoryId,
 			manufacturerId,
-			sizeIds,
+			sizeId,
 			images,
 			isFeatured,
 			isOutOfStock,
@@ -52,7 +52,7 @@ export async function POST(
 			return new NextResponse("Color id is required", { status: 400 });
 		}
 
-		if (!sizeIds) {
+		if (!sizeId) {
 			return new NextResponse("Size id is required", { status: 400 });
 		}
 
@@ -75,19 +75,6 @@ export async function POST(
 		if (!storeByUserId) {
 			return new NextResponse("Unauthorized", { status: 405 });
 		}
-		const sizes = await prismadb.size.findMany({
-			where: {
-				value: {
-					in: sizeIds,
-				},
-			},
-		});
-
-		const SizeIds = sizes.map((size) => size.id);
-
-		if (SizeIds.length !== sizeIds.length) {
-			return new NextResponse("Some size values are invalid", { status: 400 });
-		}
 
 		const inventories = await prismadb.inventory.create({
 			data: {
@@ -99,16 +86,11 @@ export async function POST(
 				isOutOfStock,
 				categoryId,
 				manufacturerId,
-
+				sizeId,
 				storeId: params.storeId,
 				images: {
 					createMany: {
 						data: [...images.map((image: { url: string }) => image)],
-					},
-				},
-				sizes: {
-					createMany: {
-						data: SizeIds.map((sizeId: string) => ({ sizeId })),
 					},
 				},
 			},
@@ -147,19 +129,15 @@ export async function GET(
 				storeId: params.storeId,
 				categoryId,
 				manufacturerId,
+				sizeId,
 				isFeatured,
 				isOutOfStock,
-				sizes: {
-					some: {
-						sizeId,
-					},
-				},
 			},
 			include: {
 				images: true,
 				category: true,
 				manufacturer: true,
-				sizes: true,
+				size: true,
 			},
 			take: limit,
 			skip,

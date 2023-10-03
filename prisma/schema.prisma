@@ -54,55 +54,43 @@ model Category {
 }
 
 model Size {
-  id          String     @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
   value       String
   storeId     String
-  store       Store      @relation("SizeToStore", fields: [storeId], references: [id])
-  inventoryId String   
-  inventory   InventorySize[]
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  store       Store     @relation("SizeToStore", fields: [storeId], references: [id])
+  inventories Inventory[] @relation("SizeToInventory")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([storeId])
-  @@index([inventoryId])
 }
 
-
-
 model Inventory {
-  id             String        @id @default(uuid())
-  storeId        String
-  store          Store         @relation("StoreToInventory", fields: [storeId], references: [id])
-  categoryId     String
-  category       Category      @relation("CategoryToInventory", fields: [categoryId], references: [id])
+  id            String        @id @default(uuid())
+  storeId       String
+  store         Store         @relation("StoreToInventory", fields: [storeId], references: [id])
+  categoryId    String
+  category      Category      @relation("CategoryToInventory", fields: [categoryId], references: [id])
   manufacturerId String
-  manufacturer   Manufacturer  @relation("ManufacturerToInventory", fields: [manufacturerId], references: [id])
-  sizes          InventorySize[]    // one-to-many relation
-  cartItems      CartItem[]
-  name           String
-  description    String
-  price          Decimal
-  stock          Int
-  isFeatured     Boolean       @default(false)
-  isOutOfStock   Boolean       @default(false)
-  images         Image[] 
-  orderItems     OrderItem[] 
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  manufacturer  Manufacturer  @relation("ManufacturerToInventory", fields: [manufacturerId], references: [id])
+  size          Size          @relation("SizeToInventory", fields: [sizeId], references: [id])
+  sizeId        String
+  cartItems     CartItem[]
+  name          String
+  description   String
+  price         Decimal
+  stock         Int
+  isFeatured    Boolean       @default(false)
+  isOutOfStock  Boolean       @default(false)
+  images        Image[] 
+  orderItems    OrderItem[] 
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   @@index([storeId])
   @@index([categoryId])
   @@index([manufacturerId])
-}
- model InventorySize {
-  inventoryId String
-  sizeId      String
-  inventory   Inventory @relation(fields: [inventoryId], references: [id])
-  size        Size      @relation(fields: [sizeId], references: [id])
-
-  @@id([inventoryId, sizeId])
-  @@index([inventoryId])
   @@index([sizeId])
 }
 
@@ -135,7 +123,6 @@ model Order {
   store      Store      @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItems OrderItem[] // Relation to OrderItem model
   customerId String?
-  stock      Int
   quantity   Int
   isPaid     Boolean    @default(false)
   phone      String     @default("")
