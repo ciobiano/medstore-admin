@@ -64,7 +64,7 @@ export async function POST(
 		data: {
 			storeId: params.storeId,
 			isPaid: false,
-			quantity: 0,
+			quantity: quantities[0],
 
 			orderItems: {
 				create: inventoryIds.map((inventoryId: string, index: number) => ({
