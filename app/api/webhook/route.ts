@@ -48,30 +48,18 @@ export async function POST(req: Request) {
 				orderItems: true,
 			},
 		});
-		const orderItems = order.orderItems;
+		const inventoryIds = order.orderItems.map((orderItem) => orderItem.inventoryId);
 
-		for (const orderItem of orderItems) {
-			const inventory = await prismadb.inventory.findUnique({
-				where: {
-					id: orderItem.inventoryId,
+		await prismadb.inventory.updateMany({
+			where: {
+				id: {
+					in: [...inventoryIds],
 				},
-			});
-
-			if (inventory && orderItem.quantity > 0) {
-				const newStock = inventory.stock - orderItem.quantity;
-
-				// Update the inventory item
-				await prismadb.inventory.update({
-					where: {
-						id: orderItem.inventoryId,
-					},
-					data: {
-						stock: newStock,
-						isOutOfStock: newStock === 0,
-					},
-				});
-			}
-		}
+			},
+			data: {
+				isOutOfStock: true,
+			},
+		});
 	}
 
 	return new NextResponse(null, { status: 200 });

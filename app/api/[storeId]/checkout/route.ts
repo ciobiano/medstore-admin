@@ -86,6 +86,7 @@ export async function POST(
 		phone_number_collection: {
 			enabled: true,
 		},
+		
 		success_url: `${process.env.FRONTEND_STORE_URL}/search?success=1`,
 		cancel_url: `${process.env.FRONTEND_STORE_URL}/search?canceled=1`,
 		metadata: {
