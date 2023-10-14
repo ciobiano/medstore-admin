@@ -11,7 +11,7 @@ export type OrderColumn = {
 	phone: string;
 	address: string;
 	product: string;
-	quantity: number;
+	quantity: string;
 	isPaid: boolean;
 
 	createdAt: string;

@@ -27,7 +27,7 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
 		product: item.orderItems
 			.map((orderItem) => orderItem.inventory.name)
 			.join(", "),
-		quantity: item.quantity,
+		quantity: item.orderItems.map((orderItem) => orderItem.quantity).join(", "),
 		isPaid: item.isPaid,
 		createdAt: format(item.createdAt, "MMMM do, yyyy"),
 	}));

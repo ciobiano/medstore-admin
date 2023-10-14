@@ -45,21 +45,41 @@ export async function POST(req: Request) {
 				phone: session?.customer_details?.phone || "",
 			},
 			include: {
-				orderItems: true,
-			},
-		});
-		const inventoryIds = order.orderItems.map((orderItem) => orderItem.inventoryId);
-
-		await prismadb.inventory.updateMany({
-			where: {
-				id: {
-					in: [...inventoryIds],
+				orderItems: {
+					include: {
+						inventory: true,
+					},
 				},
 			},
-			data: {
-				isOutOfStock: true,
-			},
 		});
+
+		await Promise.all(
+			order.orderItems.map(async (orderItem) => {
+				const inventory = orderItem.inventory;
+				const newStock = inventory.stock - orderItem.quantity;
+
+				if (newStock <= 0) {
+					await prismadb.inventory.update({
+						where: {
+							id: inventory.id,
+						},
+						data: {
+							stock: 0,
+							isOutOfStock: true,
+						},
+					});
+				} else {
+					await prismadb.inventory.update({
+						where: {
+							id: inventory.id,
+						},
+						data: {
+							stock: newStock,
+						},
+					});
+				}
+			})
+		);
 	}
 
 	return new NextResponse(null, { status: 200 });
