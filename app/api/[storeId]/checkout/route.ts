@@ -22,6 +22,8 @@ export async function OPTIONS() {
 	return NextResponse.json({}, { headers: corsHeaders });
 }
 
+
+	
 export async function POST(
 	req: Request,
 	{ params }: { params: { storeId: string } }
@@ -44,9 +46,14 @@ export async function POST(
 
 	const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
+	let totalAmount = 0; // Initialize total amount to 0
+
 	inventories.forEach((inventory, index) => {
 		if (typeof quantities[index] === "number") {
 			// Ensure quantity is a number
+			const unitAmount = inventory.price.toNumber() * 100;
+			const lineItemTotal = unitAmount * quantities[index];
+			totalAmount += lineItemTotal; // Add line item total to total amount
 			line_items.push({
 				quantity: quantities[index],
 				price_data: {
@@ -54,7 +61,7 @@ export async function POST(
 					product_data: {
 						name: inventory.name,
 					},
-					unit_amount: inventory.price.toNumber() * 100,
+					unit_amount: unitAmount, // Fix variable name
 				},
 			});
 		}
@@ -65,6 +72,7 @@ export async function POST(
 			storeId: params.storeId,
 			isPaid: false,
 			quantity: quantities[0],
+			amount: totalAmount, // Set amount to total amount
 
 			orderItems: {
 				create: inventoryIds.map((inventoryId: string, index: number) => ({
@@ -74,6 +82,7 @@ export async function POST(
 						},
 					},
 					quantity: quantities[index],
+
 				})),
 			},
 		},
@@ -86,11 +95,13 @@ export async function POST(
 		phone_number_collection: {
 			enabled: true,
 		},
-		
+
 		success_url: `${process.env.FRONTEND_STORE_URL}/search?success=1`,
 		cancel_url: `${process.env.FRONTEND_STORE_URL}/search?canceled=1`,
 		metadata: {
 			quantities: JSON.stringify(quantities),
+			amount: totalAmount,
+
 			orderId: order.id,
 		},
 	});
