@@ -1,8 +1,10 @@
 import prismadb from "@/lib/prismadb";
 import { stripe } from "@/lib/stripe";
+import { formatter } from "@/lib/utils";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import { Decimal } from 'decimal.js';
 
 export async function POST(req: Request) {
 	const body = await req.text();
@@ -43,7 +45,8 @@ export async function POST(req: Request) {
 				isPaid: true,
 				address: addressString,
 				phone: session?.customer_details?.phone || "",
-				
+				email: session?.customer_details?.email || "",
+				amount: new Decimal(session?.amount_total || 0).div(100), // convert to Decimal and divide by 100 to get the correct value
 			},
 			include: {
 				orderItems: {

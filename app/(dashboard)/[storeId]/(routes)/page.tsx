@@ -46,9 +46,11 @@ const DashboardPage: React.FC<DashboardPageProps> = async ({ params }) => {
 
 	const recentSales = order.map((item) => ({
 		id: item.id,
+		email: item.email,
 		phone: item.phone,
 		address: item.address,
-		amount : item.amount.toNumber(),
+		amount: item.amount.toFixed(2), 
+
 		createdAt: format(item.createdAt, "MMMM do, yyyy"),
 	}));
 
