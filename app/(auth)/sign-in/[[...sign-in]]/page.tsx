@@ -1,13 +1,11 @@
 import React from "react";
-import SvgBackground from "@/components/svgBackground";
 import { SignIn } from "@clerk/nextjs";
-import avatar from "@/images/doctor.png";
-import Image from "next/image";
+
 
 export default function Page() {
 	return (
 		<>
-			<div className="grid grid-cols-2  max-w-fit mx-auto">
+			<div className="grid  grid-cols-2   max-w-fit mx-auto">
 				<div className="flex flex-col justify-center items-center">
 					<SignIn
 						appearance={{

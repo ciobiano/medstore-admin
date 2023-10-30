@@ -9,7 +9,7 @@ export default function AuthLayout({
     return (
 			<>
 				<SvgBackground>
-					<div className="flex justify-center items-center mx-auto h-screen">
+					<div className="flex justify-center items-center mx-auto h-screen ">
 						{children}
 					</div>
 				</SvgBackground>
