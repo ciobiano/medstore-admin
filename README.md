@@ -1,34 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+#STORE CMS
 
-## Getting Started
+CMS is a robust and efficient Content Management System designed to streamline the management of digital content. This application provides a user-friendly interface for managing content, users, roles, and various administrative tasks.
 
-First, run the development server:
+## Table of Contents
+- [Project Description](#project-description)
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
+- [Contributors](#contributors)
+- [License](#license)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## Project Description
+CMS Admin is an advanced Content Management System (CMS) that facilitates the seamless management of digital content. It provides administrators with tools to efficiently create, update, and delete content, manage user roles, and handle various administrative tasks with ease.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
+- **Content Management**: Create, update, and delete articles, pages, and media.
+- **User Management**: Add, edit, and remove users with different roles and permissions.
+- **Role-Based Access Control**: Define roles and assign permissions to ensure secure content management.
+- **Dashboard Analytics**: View comprehensive analytics and reports to make informed decisions.
+- **Media Library**: Manage images, videos, and other media files in an organized manner.
+- **SEO Optimization**: Tools to optimize content for search engines.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Installation
+To set up CMS Admin locally, follow these steps:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ciobiano/medstore-admin.git
+   cd medstore-admin
 
-## Learn More
+2.   **Install dependencies**
+    Ensure you have Node.js and npm installed. Then run:
+     ```bash
+      npm install
 
-To learn more about Next.js, take a look at the following resources:
+3. **Set up environment variables**
+  Create a .env file in the root directory and configure the following environment variables:
+    DATABASE_URL=<your-database-url>
+    JWT_SECRET=<your-jwt-secret>
+    PORT=<your-port>
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Technologies Used**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    Frontend: React.js, Nextjs 13
+    Backend: Node.js,
+    Database: MongoDB
+    Authentication: JWT (JSON Web Tokens)
+    Styling: tailwind, CSS
 
-## Deploy on Vercel
+   **Contributors**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[Obiano Ralph](https://github.com/ciobiano/)
+    
+        
