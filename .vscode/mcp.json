@@ -1,0 +1,8 @@
+{
+	"servers": {
+		"catalyst-mcp": {
+			"type": "sse",
+			"url": "https://gitmcp.io/bigcommerce/catalyst/tree/canary"
+		}
+	}
+}

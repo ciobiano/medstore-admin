@@ -6,87 +6,87 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Store {
-  id        String        @id @default(uuid())
-  name      String
-  userId    String
-  inventory Inventory[]   @relation("StoreToInventory")
-  billboard Billboard[]   @relation("StoreToBillboard")
-  category  Category[]    @relation("StoreToCategory")
-  size      Size[]        @relation("SizeToStore")
+  id           String         @id @default(uuid())
+  name         String
+  userId       String
+  inventory    Inventory[]    @relation("StoreToInventory")
+  billboard    Billboard[]    @relation("StoreToBillboard")
+  category     Category[]     @relation("StoreToCategory")
+  size         Size[]         @relation("SizeToStore")
   manufacturer Manufacturer[] @relation("StoreToManufacturer")
-  order     Order[]       @relation("StoreToOrder")
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  order        Order[]        @relation("StoreToOrder")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model Billboard {
-  id        String    @id @default(uuid())
-  storeId   String
-  store     Store     @relation("StoreToBillboard", fields: [storeId], references: [id])
+  id         String     @id @default(uuid())
+  storeId    String
+  store      Store      @relation("StoreToBillboard", fields: [storeId], references: [id])
   categories Category[]
-  label     String
-  imageUrl  String
-  createdAt DateTime  @default(now())
-  UpdatedAt DateTime  @updatedAt
+  label      String
+  imageUrl   String
+  createdAt  DateTime   @default(now())
+  UpdatedAt  DateTime   @updatedAt
 
   @@index([storeId])
 }
 
 model Category {
-  id          String    @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
   storeId     String
-  store       Store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  store       Store       @relation("StoreToCategory", fields: [storeId], references: [id])
   inventories Inventory[] @relation("CategoryToInventory")
   billboardId String
-  billboard   Billboard @relation(fields: [billboardId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  billboard   Billboard   @relation(fields: [billboardId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([storeId])
   @@index([billboardId])
 }
 
 model Size {
-  id          String    @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
   value       String
   storeId     String
-  store       Store     @relation("SizeToStore", fields: [storeId], references: [id])
+  store       Store       @relation("SizeToStore", fields: [storeId], references: [id])
   inventories Inventory[] @relation("SizeToInventory")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([storeId])
 }
 
 model Inventory {
-  id            String        @id @default(uuid())
-  storeId       String
-  store         Store         @relation("StoreToInventory", fields: [storeId], references: [id])
-  categoryId    String
-  category      Category      @relation("CategoryToInventory", fields: [categoryId], references: [id])
+  id             String       @id @default(uuid())
+  storeId        String
+  store          Store        @relation("StoreToInventory", fields: [storeId], references: [id])
+  categoryId     String
+  category       Category     @relation("CategoryToInventory", fields: [categoryId], references: [id])
   manufacturerId String
-  manufacturer  Manufacturer  @relation("ManufacturerToInventory", fields: [manufacturerId], references: [id])
-  size          Size          @relation("SizeToInventory", fields: [sizeId], references: [id])
-  sizeId        String
-  cartItems     CartItem[]
-  name          String
-  description   String
-  price         Decimal
-  stock         Int
-  isFeatured    Boolean       @default(false)
-  isOutOfStock  Boolean       @default(false)
-  images        Image[] 
-  orderItems    OrderItem[] 
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  manufacturer   Manufacturer @relation("ManufacturerToInventory", fields: [manufacturerId], references: [id])
+  size           Size         @relation("SizeToInventory", fields: [sizeId], references: [id])
+  sizeId         String
+  cartItems      CartItem[]
+  name           String
+  description    String
+  price          Decimal
+  stock          Int
+  isFeatured     Boolean      @default(false)
+  isOutOfStock   Boolean      @default(false)
+  images         Image[]
+  orderItems     OrderItem[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([storeId])
   @@index([categoryId])
@@ -95,56 +95,56 @@ model Inventory {
 }
 
 model Manufacturer {
-  id          String     @id @default(uuid())
+  id          String      @id @default(uuid())
   name        String
-  storeId     String     // Foreign Key to Store
-  store       Store      @relation("StoreToManufacturer", fields: [storeId], references: [id])
+  storeId     String // Foreign Key to Store
+  store       Store       @relation("StoreToManufacturer", fields: [storeId], references: [id])
   inventories Inventory[] @relation("ManufacturerToInventory")
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([storeId])
 }
 
 model Image {
-  id           String     @id @default(uuid())
-  inventoryId  String
-  inventory    Inventory  @relation(fields: [inventoryId], references: [id], onDelete: Cascade )
-  url          String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id          String    @id @default(uuid())
+  inventoryId String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  url         String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([inventoryId])
 }
 
 model Order {
-  id         String     @id @default(uuid())
-  storeId    String     // Foreign Key to Store
-  store      Store      @relation("StoreToOrder", fields: [storeId], references: [id])
+  id         String      @id @default(uuid())
+  storeId    String // Foreign Key to Store
+  store      Store       @relation("StoreToOrder", fields: [storeId], references: [id])
   orderItems OrderItem[] // Relation to OrderItem model
   customerId String?
   quantity   Int
-  isPaid     Boolean    @default(false)
-  phone      String     @default("")
-  address    String     @default("")
-  email     String     @default("")
-  amount      Decimal  @default(00)
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  email      String      @default("")
+  amount     Decimal     @default(00)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@index([storeId])
   @@index([customerId])
 }
 
 model OrderItem {
-  id           String     @id @default(uuid())
-  orderId      String     // Foreign Key to Order
-  order        Order      @relation(fields: [orderId], references: [id])
-  inventoryId  String
-  inventory    Inventory  @relation(fields: [inventoryId], references: [id])
-  quantity     Int
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id          String    @id @default(uuid())
+  orderId     String // Foreign Key to Order
+  order       Order     @relation(fields: [orderId], references: [id])
+  inventoryId String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  quantity    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([orderId])
   @@index([inventoryId])
@@ -152,7 +152,7 @@ model OrderItem {
 
 model CartItem {
   id          String    @id @default(uuid())
-  cartId      String    // Foreign Key to Cart
+  cartId      String // Foreign Key to Cart
   inventoryId String
   inventory   Inventory @relation(fields: [inventoryId], references: [id])
   quantity    Int
