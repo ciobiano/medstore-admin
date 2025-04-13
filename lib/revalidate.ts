@@ -1,16 +1,15 @@
 import { revalidateTag } from "next/cache"; // Import if calling revalidateTag directly from backend
 
 export async function triggerRevalidation(tag: string) {
-	// Construct the URL to your revalidation endpoint
-	// Ensure this URL correctly points to your running medstore-admin app's API
-	const revalidationUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/revalidate?tag=${tag}&secret=${process.env.REVALIDATION_SECRET}`;
+	
+	const relativePath = `/api/revalidate?tag=${tag}&secret=${process.env.REVALIDATION_SECRET}`;
 
 	console.log(
-		`Sending revalidation request for tag: ${tag} to ${revalidationUrl}`
+		`Sending revalidation request for tag: ${tag} to ${relativePath}`
 	); 
 
 	try {
-		const revalRes = await fetch(revalidationUrl);
+		const revalRes = await fetch(relativePath);
 		if (!revalRes.ok) {
 			console.error(
 				`Revalidation request failed for tag "${tag}": ${
