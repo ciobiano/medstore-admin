@@ -1,4 +1,5 @@
 import prismadb from "@/lib/prismadb";
+import { triggerRevalidation } from "@/lib/revalidate";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 
@@ -65,6 +66,7 @@ export async function PATCH(
 				billboardId,
 			},
 		});
+		await triggerRevalidation("categories");
 		return NextResponse.json(category);
 	} catch (error) {
 		console.log("[CATEGORY_PATCH_ ERROR]", error);
@@ -101,6 +103,7 @@ export async function DELETE(
 				id: params.categoryId,
 			},
 		});
+		await triggerRevalidation("categories");
 		return NextResponse.json(category);
 	} catch (error) {
 		console.log("[CATEGORY_DELETE_ERROR]", error);

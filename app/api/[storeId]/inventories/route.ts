@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { triggerRevalidation } from "@/lib/revalidate";
 
 export async function POST(
 	req: Request,
@@ -95,7 +96,7 @@ export async function POST(
 				},
 			},
 		});
-
+		await triggerRevalidation("inventories");
 		return NextResponse.json(inventories);
 	} catch (error) {
 		console.log("[INVENTORY_POST]", error);

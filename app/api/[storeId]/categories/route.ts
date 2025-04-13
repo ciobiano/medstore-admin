@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { triggerRevalidation } from "@/lib/revalidate";
 
 export async function POST(
 	req: Request,
@@ -48,6 +49,7 @@ export async function POST(
 				storeId: params.storeId,
 			},
 		});
+		await triggerRevalidation("categories");
 
 		return NextResponse.json(category);
 	} catch (error) {
@@ -70,6 +72,8 @@ export async function GET(
 				storeId: params.storeId,
 			},
 		});
+
+		await triggerRevalidation("categories");
 
 		return NextResponse.json(category);
 	} catch (error) {

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 
 import prismadb from "@/lib/prismadb";
+import { triggerRevalidation } from "@/lib/revalidate";
 
 export async function GET(
 	req: Request,
@@ -63,6 +64,7 @@ export async function DELETE(
 				id: params.inventoryId,
 			},
 		});
+		await triggerRevalidation("inventories");
 
 		return NextResponse.json(inventories);
 	} catch (error) {
@@ -177,6 +179,7 @@ export async function PATCH(
 			},
 		});
 
+		await triggerRevalidation("inventories");
 		return NextResponse.json(inventories);
 	} catch (error) {
 		console.log("[INVENTORY_PATCH]", error);
