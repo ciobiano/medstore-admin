@@ -1,15 +1,30 @@
-import { revalidateTag } from "next/cache"; // Import if calling revalidateTag directly from backend
-
 export async function triggerRevalidation(tag: string) {
-	
-	const relativePath = `/api/revalidate?tag=${tag}&secret=${process.env.REVALIDATION_SECRET}`;
+	const baseUrl = process.env.ADMIN_APP_BASE_URL;
+	const secret = process.env.REVALIDATION_SECRET;
+
+	if (!baseUrl) {
+		console.error(
+			"ADMIN_APP_BASE_URL environment variable is not set. Cannot trigger revalidation."
+		);
+		return;
+	}
+	if (!secret) {
+		console.error(
+			"REVALIDATION_SECRET environment variable is not set. Cannot trigger revalidation."
+		);
+		return;
+	}
+
+	const revalidationUrl = `${baseUrl}/api/revalidate?tag=${tag}&secret=${secret}`;
 
 	console.log(
-		`Sending revalidation request for tag: ${tag} to ${relativePath}`
-	); 
+		`Sending revalidation request for tag: ${tag} to ${revalidationUrl}`
+	);
 
 	try {
-		const revalRes = await fetch(relativePath);
+		// Fetch using the absolute URL
+		const revalRes = await fetch(revalidationUrl, { method: "GET" });
+
 		if (!revalRes.ok) {
 			console.error(
 				`Revalidation request failed for tag "${tag}": ${
@@ -23,18 +38,4 @@ export async function triggerRevalidation(tag: string) {
 	} catch (err) {
 		console.error(`Failed to send revalidation request for tag "${tag}":`, err);
 	}
-
-	/* 
-        // Alternative (If revalidating within the SAME app instance, less common for separate admin/frontend):
-        // You could potentially call revalidateTag directly here,
-        // BUT that only works if the code triggering the revalidation 
-        // runs in the SAME Next.js instance as the frontend app whose cache needs clearing.
-        // Calling your own API endpoint is generally safer for separate apps.
-        try {
-            revalidateTag(tag);
-            console.log(`Revalidated tag "${tag}" directly.`);
-        } catch (err) {
-            console.error(`Failed to revalidate tag "${tag}" directly:`, err);
-        }
-        */
 }
